@@ -1,23 +1,22 @@
 #!/usr/bin/python3
-'''Module 1-web_pack_static
-Packs the static web page folder web_static into a .tgz file
-'''
-from fabric.api import *
+"""
+Fabric script that generates a tgz archive from the contents of the web_static
+folder of the AirBnB Clone repo
+"""
+
 from datetime import datetime
-import os
+from fabric.api import local
+from os.path import isdir
 
 
 def do_pack():
-    '''Compresses directory web_static into .tgz format'''
-    t = datetime.now()
-    file_name = "web_static_" + str(t.year) + str(t.month) + str(t.day) +\
-        str(t.hour) + str(t.minute) + str(t.second) + '.tgz'
-    local('mkdir -p versions')
-    local('tar -cvzf versions/{} web_static'.format(file_name))
+    """generates a tgz archive"""
     try:
-        print('web_static packed: versions/' + file_name, "->",
-              str(os.path.getsize(os.getcwd() + '/versions/'
-                  + file_name)) + "Bytes")
-    except Exception:
+        date = datetime.now().strftime("%Y%m%d%H%M%S")
+        if isdir("versions") is False:
+            local("mkdir versions")
+        file_name = "versions/web_static_{}.tgz".format(date)
+        local("tar -cvzf {} web_static".format(file_name))
+        return file_name
+    except:
         return None
-    return 'versions/' + file_name
